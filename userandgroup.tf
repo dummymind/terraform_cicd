@@ -1,3 +1,6 @@
+#user and policy and s3 bucket
+
+
 data "aws_iam_policy_document" "s3_policy" {
   statement {
     actions   = ["s3:ListAllMyBuckets"]
@@ -53,6 +56,7 @@ output "secret" {
 }  
 
 
+#group and group membership
 
 resource "aws_iam_group" "terraform_custom_group" {
   name = "TerraformCustomGroup"
@@ -71,4 +75,43 @@ resource "aws_iam_group_membership" "team" {
   ]
 
   group = aws_iam_group.terraform_custom_group.name
+}
+
+
+#role and iam_policy
+
+
+data "aws_iam_policy_document" "t_assume_role" {
+  effect = "Allow"
+
+  principals {
+    type        = "Service"
+    identifiers = ["ec2.amazonaws.com"]
+  }
+
+  actions = ["sts:AssumeRole"]
+}
+
+resource "aws_iam_role" "t_role" {
+  name               = "t_test-role"
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+}
+
+data "aws_iam_policy_document" "t_policy" {
+  statement {
+    effect    = "Allow"
+    actions   = ["ec2:Describe*"]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "t_policy" {
+  name        = "t_test-policy"
+  description = "A test policy"
+  policy      = data.aws_iam_policy_document.t_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "t_test-attach" {
+  role       = aws_iam_role.t_role.name
+  policy_arn = aws_iam_policy.t_policy.arn
 }
