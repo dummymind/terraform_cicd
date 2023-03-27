@@ -51,3 +51,24 @@ output "secret" {
   value = aws_iam_access_key.my_access_key.encrypted_secret
   sensitive = true
 }  
+
+
+
+resource "aws_iam_group" "terraform_custom_group" {
+  name = "TerraformCustomGroup"
+}
+
+resource "aws_iam_group_policy_attachment" "custom_policy" {
+  group      = aws_iam_group.terraform_custom_group.name
+  policy_arn = aws_iam_policy.policy.arn
+}
+
+resource "aws_iam_group_membership" "team" {
+  name = "tf-testing-group-membership"
+
+  users = [
+    aws_iam_user.terraform_new_user.name,
+  ]
+
+  group = aws_iam_group.terraform_custom_group.name
+}
