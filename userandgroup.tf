@@ -82,14 +82,16 @@ resource "aws_iam_group_membership" "team" {
 
 
 data "aws_iam_policy_document" "t_assume_role" {
+   statement {
   effect = "Allow"
-
+   
   principals {
     type        = "Service"
     identifiers = ["ec2.amazonaws.com"]
   }
 
   actions = ["sts:AssumeRole"]
+   }
 }
 
 resource "aws_iam_role" "t_role" {
