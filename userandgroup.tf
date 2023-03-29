@@ -94,7 +94,7 @@ data "aws_iam_policy_document" "t_assume_role" {
 
 resource "aws_iam_role" "t_role" {
   name               = "t_test-role"
-  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+  assume_role_policy = data.aws_iam_policy_document.t_assume_role.json
 }
 
 data "aws_iam_policy_document" "t_policy" {
